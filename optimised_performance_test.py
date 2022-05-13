@@ -54,6 +54,7 @@ def optimisedPerformanceTest():
         print()
         print('/////')
 
-optimisedPerformanceTest() 
+if __name__ == '__main__':
+    optimisedPerformanceTest() 
 
 
