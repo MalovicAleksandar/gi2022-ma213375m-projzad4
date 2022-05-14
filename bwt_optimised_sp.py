@@ -4,9 +4,10 @@ from functools import cmp_to_key
 """
 Inplace comparison of rotations for calculating BWT
 
-Provided arguments are types containing
+Provided arguments are tuples containing
 start - start index in string - position 0
-inputString - string to be queried during comparison, same string but we need to double the reference due to limitations of the sorting mechanisms in python - position 2
+inputString - string to be queried during comparison - position 1
+We need to double the sstring reference due to limitations of the custom sorting mechanisms in python 
 """
 def inplaceRotationsCompare(t1, t2):
     i = t1[0]
