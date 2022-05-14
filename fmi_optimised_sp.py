@@ -1,4 +1,3 @@
-from functools import cmp_to_key
 from fmi_unoptimised import FIndex
 from fmi_unoptimised import Tally
 from fmi_unoptimised import SuffixArray
@@ -6,8 +5,6 @@ from helper import isInputValid
 from fmi_unoptimised import FMIndex
 from bwt_optimised_sp import spCalculateBurrowsWheelerMatrix
 from bwt_optimised_sp import spCalculateLIndex
-from bwt_optimised_sp import spRotations
-
 class SpOptimisedFIndex(FIndex):
     def __init__(self, bwm, t):
         if bwm == None:
@@ -131,26 +128,11 @@ class SpOptimisedTally(Tally):
     def dataStructure(self):
         return self.tally
 
-def inplaceSuffixCompare(t1, t2):
-    i = t1[0]
-    j = t2[0]
-    inputLen = len(t1[1])
-    # Iterate until we find different characters or one of the arrays reaches end
-    while i < inputLen and j < inputLen:
-        if (t1[1][i] != t1[1][j]):
-            return -1 if t1[1][i] < t1[1][j] else 1
-        i = i + 1
-        j = j + 1
-    # If all characters were equal so far, we can just return difference of suffix lengths, or negative difference of suffix offsets
-    return t2[0] - t1[0]
-
 class SpOptimisedSuffixArray(SuffixArray):
-    def __init__(self, t, fIndex, lIndex, tally):
-        if t == None:
+    def __init__(self, bwm, fIndex, lIndex, tally):
+        if bwm == None:
             raise ValueError("Invalid BWT supplied")
-        suffixArray = spRotations(t)
-        suffixArray.sort(key=cmp_to_key(inplaceSuffixCompare))
-        self.value = self.value = [suffix[0] for suffix in suffixArray[::CHECKPOINT_DISTANCE]]
+        self.value  = bwm[::CHECKPOINT_DISTANCE]
         self.fIndex = fIndex
         self.lIndex = lIndex
         self.tally = tally
@@ -201,4 +183,4 @@ class SpOptimisedFMIndex(FMIndex):
         self.lIndex = spCalculateLIndex(bwm, tt)
         self.fIndex = SpOptimisedFIndex(bwm, tt)
         self.tally = SpOptimisedTally(self.lIndex)
-        self.suffixArray = SpOptimisedSuffixArray(tt, self.fIndex, self.lIndex, self.tally)
+        self.suffixArray = SpOptimisedSuffixArray(bwm, self.fIndex, self.lIndex, self.tally)

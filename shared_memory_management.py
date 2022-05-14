@@ -1,11 +1,9 @@
 import multiprocessing.shared_memory as shm
-from helper import loadTestFile
 import numpy as np
 import multiprocessing as mp
 
 SHARED_STRING_NAME= 'shm_string'
-SHARED_ROTATIONS_ARRAY_NAME = 'shm_rotations_array'
-SHARED_SUFFIX_ARRAY_NAME = 'shm_suffix_array'
+SHARED_ARRAY_NAME = 'shm_suffix_array'
 
 def _multiprocessIndexFill(arrayName, start, end, size):
     shmArray = shm.SharedMemory(name=arrayName, create=False)
@@ -42,21 +40,14 @@ class SharedMemoryManager():
         for i in range(0, len(b)):
             self.shmString.buf[i] = ord(b[i])
         try:
-            self.shmRotationsArray = shm.SharedMemory(name=SHARED_ROTATIONS_ARRAY_NAME, create=True, size = len(b) * 8)
+            self.shmArray = shm.SharedMemory(name=SHARED_ARRAY_NAME, create=True, size = len(b) * 8)
         except FileExistsError:
-            self.shmRotationsArray = shm.SharedMemory(name=SHARED_ROTATIONS_ARRAY_NAME, create=False, size = len(b) * 8)
-        multiprocessIndexFill(self.inputSize, SHARED_ROTATIONS_ARRAY_NAME)
-        try:
-            self.shmSuffixArray = shm.SharedMemory(name=SHARED_SUFFIX_ARRAY_NAME, create=True, size = len(b) * 8)
-        except FileExistsError:
-            self.shmSuffixArray = shm.SharedMemory(name=SHARED_SUFFIX_ARRAY_NAME, create=False, size = len(b) * 8)
-        multiprocessIndexFill(self.inputSize, SHARED_SUFFIX_ARRAY_NAME)
+            self.shmArray = shm.SharedMemory(name=SHARED_ARRAY_NAME, create=False, size = len(b) * 8)
+        multiprocessIndexFill(self.inputSize, SHARED_ARRAY_NAME)
 
     def deconstruct(self):
         if self.inputSize != -1:
             self.shmString.close()
             self.shmString.unlink()
-            self.shmRotationsArray.close()
-            self.shmRotationsArray.unlink()
-            self.shmSuffixArray.close()
-            self.shmSuffixArray.unlink()
+            self.shmArray.close()
+            self.shmArray.unlink()

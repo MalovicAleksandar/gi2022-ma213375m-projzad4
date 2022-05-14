@@ -3,8 +3,6 @@ from bwt_optimised import calculateBurrowsWheelerTransformOptimised
 from fmi_optimised import OptimisedFIndex
 from fmi_optimised import OptimisedTally
 from fmi_optimised import OptimisedSuffixArray
-from bwt_unoptimised import calculateBurrowsWheelerMatrixUnoptimised, calculateLIndexUnoptimized
-from bwt_unoptimised import calculateLIndexUnoptimized
 from helper import arraysEqual
 from helper import setsEqual
 from shared_memory_management import SharedMemoryManager

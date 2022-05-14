@@ -114,7 +114,7 @@ def _testSpOptimisedSuffixArrayStructure(test):
         lIndex = spCalculateLIndex(bwm, test['input'])
         fIndex = SpOptimisedFIndex(bwm, test['input'])
         tally = SpOptimisedTally(lIndex)
-        suffixArray = SpOptimisedSuffixArray(test['input'], fIndex, lIndex, tally)
+        suffixArray = SpOptimisedSuffixArray(bwm, fIndex, lIndex, tally)
     except ValueError:
         assert test['expectedFailure']
         return

@@ -3,10 +3,9 @@ from fmi_unoptimised import Tally
 from fmi_unoptimised import SuffixArray
 from helper import isInputValid
 from fmi_unoptimised import FMIndex
-from shared_memory_management import SHARED_SUFFIX_ARRAY_NAME, SharedMemoryManager
+from shared_memory_management import SharedMemoryManager
 from bwt_optimised import calculateBurrowsWheelerTransformOptimised
 import numpy as np
-from bwt_optimised_sort import multikey_qsort, suffixGet
 
 class OptimisedFIndex(FIndex):
     def __init__(self, sm):
@@ -15,7 +14,7 @@ class OptimisedFIndex(FIndex):
         self.dict = {}
         self.inputLen = sm.inputSize
         string = sm.shmString
-        rotations = np.ndarray((sm.inputSize, ), dtype=np.int64, buffer=sm.shmRotationsArray.buf)
+        rotations = np.ndarray((sm.inputSize, ), dtype=np.int64, buffer=sm.shmArray.buf)
         """
         We are using two helper dictionaries to maintain O(1) search for the last occurence of an char.
         ki - mapping of a key to its index
@@ -139,8 +138,7 @@ class OptimisedSuffixArray(SuffixArray):
     def __init__(self, sm, fIndex, lIndex, tally):
         if sm == None:
             raise ValueError("Invalid BWT supplied")
-        multikey_qsort(SHARED_SUFFIX_ARRAY_NAME, suffixGet, sm.inputSize)
-        suffixArray = np.ndarray((sm.inputSize, ), dtype=np.int64, buffer=sm.shmSuffixArray.buf)
+        suffixArray = np.ndarray((sm.inputSize, ), dtype=np.int64, buffer=sm.shmArray.buf)
         self.value = suffixArray[::CHECKPOINT_DISTANCE]
         self.fIndex = fIndex
         self.lIndex = lIndex
