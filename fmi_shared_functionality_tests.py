@@ -1,3 +1,4 @@
+from fmi_optimised_sp import SpOptimisedFMIndex
 from fmi_unoptimised import FIndex, FMIndex
 from fmi_unoptimised import Tally
 from fmi_unoptimised import SuffixArray
@@ -219,7 +220,7 @@ def testFMIndex(constr):
         {
             'class': constr,
             'input': 'GACNT',
-            'expectedFailure': True,
+            'expectedFailure': False,
             'queryTests': [
                 {
                     'substring': 'T',
@@ -234,7 +235,7 @@ def testFMIndex(constr):
         {
             'class': constr,
             'input': 'GACTGACT',
-            'expectedFailure': True,
+            'expectedFailure': False,
             'queryTests': [
                 {
                     'substring': 'GA',
@@ -249,7 +250,7 @@ def testFMIndex(constr):
         {
             'class': constr,
             'input': 'GACTGACT$',
-            'expectedFailure': True,
+            'expectedFailure': False,
             'queryTests': [
                 {
                     'substring': 'GA',
@@ -279,3 +280,6 @@ def testUnoptimisedFMIndex():
 
 def testOptimisedFMIndex():
     testFMIndex(OptimisedFMIndex)
+
+def testSpOptimisedFMIndex():
+    testFMIndex(SpOptimisedFMIndex)

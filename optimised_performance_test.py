@@ -14,11 +14,17 @@ tests = [
     './min_tests/min_test4.fa'
 ]
 
+testQueries = [
+    'AAA',
+    'GAGA',
+    'TTCAAAA',
+    'TTCCAAGATTAGTAATAA'
+]
+
 process = psutil.Process(os.getpid())
 a = [0,]
 
 def constructOptimisedBWT(testInput):
-    gc.collect()
     initMem = process.memory_info().rss / 1024
     sm = SharedMemoryManager()
     sm.construct(testInput)
@@ -28,7 +34,6 @@ def constructOptimisedBWT(testInput):
     a[0] += (mem - initMem)
 
 def constructOptimisedFMIndex(testInput):
-    gc.collect()
     initMem = process.memory_info().rss / 1024
     OptimisedFMIndex(testInput)
     mem = process.memory_info().rss / 1024
@@ -44,12 +49,20 @@ def optimisedPerformanceTest():
         print("Input size: " + str(len(testInput)))
 
         a[0] = 0
-        print("Average BWT construction time in seconds (3 runs): " + str(timeit(lambda: constructOptimisedBWT(testInput), number=3)))
+        time = timeit(lambda: constructOptimisedBWT(testInput), setup='gc.collect()', number=3)
+        print("Average BWT construction time in seconds (3 runs): " + str(time/3))
         print("Average BWT memory usage in kB (3 runs): " + str(a[0]/3))
 
         a[0] = 0
-        print("Average FMI construction time in seconds (3 runs): " + str(timeit(lambda: constructOptimisedFMIndex(testInput), number=3)))
+        time = timeit(lambda: constructOptimisedFMIndex(testInput), setup='gc.collect()', number=3)
+        print("Average FMI construction time in seconds (3 runs): " + str(time/3))
         print("Average FMI memory usage in kB (3 runs): " + str(a[0]/3))
+
+        fmi = OptimisedFMIndex(testInput)
+        for j in range(0, len(testQueries)):
+            print('Testing query: ' + testQueries[j])
+            print("Average FMI query time in seconds (3 runs): " + str(timeit(lambda: fmi.query(testQueries[j]), number=3)/3))
+        del fmi
 
         print()
         print('/////')
