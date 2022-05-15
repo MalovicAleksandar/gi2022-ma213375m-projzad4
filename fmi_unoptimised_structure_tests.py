@@ -25,18 +25,18 @@ def testUnoptimisedFIndexStructure():
     # Test case 2: Valid BWM for input string 'abcd'
     _testUnoptimisedFIndexStructure(
         {
-            'input': ['$abcd','abcd$', 'bcd$a', 'cd$ab', 'd$abc'],
+            'input': ['$GATC','ATC$G', 'C$GAT', 'GATC$', 'TC$GA'],
             'expectedFailure': False,
-            'expectedOutput': '$abcd',
+            'expectedOutput': '$ACGT',
         }
     )
     
     # Test case 2: Valid BWM with repetition for input string 'aabbab'
     _testUnoptimisedFIndexStructure(
         {
-            'input': ['$aabbab','aabbab$','ab$aabb','abbab$a','b$aabba','bab$aab','bbab$aa'],
+            'input': ['$AACCAC','AACCAC$','AC$AACC','ACCAC$A','C$AACCA','CAC$AAC','CCAC$AA'],
             'expectedFailure': False,
-            'expectedOutput': '$aaabbb',
+            'expectedOutput': '$AAACCC',
         }
     )
 
@@ -73,10 +73,10 @@ def testUnoptimisedTallyStructure():
     # Test case 3: One character string
     _testUnoptimisedTallyStructure(
         {
-            'input': 'a',
+            'input': 'A',
             'expectedFailure': False,
             'expectedOutput': {
-                'a': [1]
+                'A': [1]
             }
         }
     )
@@ -84,13 +84,13 @@ def testUnoptimisedTallyStructure():
     # Test case 4: Valid BWT string
     _testUnoptimisedTallyStructure(
         {
-            'input': 'abcaab$c',
+            'input': 'ACGAAC$G',
             'expectedFailure': False,
             'expectedOutput': {
                 '$': [0, 0, 0, 0, 0, 0, 1, 1],
-                'a': [1, 1, 1, 2, 3, 3, 3, 3],
-                'b': [0, 1, 1, 1, 1, 2, 2, 2],
-                'c': [0, 0, 1, 1, 1, 1, 1, 2]
+                'A': [1, 1, 1, 2, 3, 3, 3, 3],
+                'C': [0, 1, 1, 1, 1, 2, 2, 2],
+                'G': [0, 0, 1, 1, 1, 1, 1, 2]
             }
         }
     )
@@ -125,7 +125,7 @@ def testUnoptimisedSuffixArrayStructure():
     # Test case 3: String with one character
     _testUnoptimisedSuffixArrayStructure(
         {
-            'input': 'a$',
+            'input': 'A$',
             'expectedFailure': False,
             'expectedOutput': [1, 0]
         }
@@ -134,7 +134,7 @@ def testUnoptimisedSuffixArrayStructure():
     # Test case 4: Valid string
     _testUnoptimisedSuffixArrayStructure(
         {
-            'input': 'abcaabc$',
+            'input': 'ACGAACG$',
             'expectedFailure': False,
             'expectedOutput': [7, 3, 4, 0, 5, 1, 6, 2]
         }

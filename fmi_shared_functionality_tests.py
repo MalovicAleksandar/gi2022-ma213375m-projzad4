@@ -1,16 +1,14 @@
-from fmi_optimised_sp import SpOptimisedFMIndex
-from fmi_unoptimised import FIndex, FMIndex
-from fmi_unoptimised import Tally
-from fmi_unoptimised import SuffixArray
-from fmi_optimised import OptimisedFIndex, OptimisedFMIndex
-from fmi_optimised import OptimisedTally
-from fmi_optimised import OptimisedSuffixArray
+from fmi_optimised_sp import *
+from fmi_unoptimised import *
+from fmi_optimised import *
 from bwt_unoptimised import calculateBurrowsWheelerMatrixUnoptimised
 from bwt_unoptimised import calculateLIndexUnoptimized
+from bwt_optimised_sp import spCalculateBurrowsWheelerMatrix
+from bwt_optimised_sp import spCalculateLIndex
 from helper import arraysEqual
 
 def _testFIndexFunctionality(test):
-    fIndex = test['class'](test['input'][0], test['input'][1])
+    fIndex = test['class'](test['input'])
     for qTest in test['queryTests']:
         assert (fIndex.first(qTest['char']) == qTest['expectedFirst'] 
             and fIndex.last(qTest['char']) == qTest['expectedLast'])
@@ -20,20 +18,20 @@ def testFIndexFunctionality(constr):
     _testFIndexFunctionality(
         {
             'class': constr,
-            'input': ([4, 0, 1, 2, 3], 'abcd$'),
+            'input': 'ACGT$',
             'queryTests': [
                 {
-                    'char': 'a',
+                    'char': 'A',
                     'expectedFirst': 1,
                     'expectedLast': 1
                 },
                 {
-                    'char': 'b',
+                    'char': 'C',
                     'expectedFirst': 2,
                     'expectedLast': 2
                 },
                 {
-                    'char': 'n',
+                    'char': 'N',
                     'expectedFirst': -1,
                     'expectedLast': -1
                 }
@@ -45,20 +43,20 @@ def testFIndexFunctionality(constr):
     _testFIndexFunctionality(
         {
             'class': constr,
-            'input': ([6, 0, 4, 1, 5, 3, 2], 'aabbab$'),
+            'input': 'AACCAC$',
             'queryTests': [
                 {
-                    'char': 'a',
+                    'char': 'A',
                     'expectedFirst': 1,
                     'expectedLast': 3
                 },
                 {
-                    'char': 'b',
+                    'char': 'C',
                     'expectedFirst': 4,
                     'expectedLast': 6
                 },
                 {
-                    'char': 'n',
+                    'char': 'N',
                     'expectedFirst': -1,
                     'expectedLast': -1
                 }
@@ -67,10 +65,12 @@ def testFIndexFunctionality(constr):
     )
 
 def constructUnoptimisedFIndex(t):
-    return FIndex(t)
+    bwm = calculateBurrowsWheelerMatrixUnoptimised(t)
+    return FIndex(bwm)
 
-def constructOptimisedFIndex(t):
-    return OptimisedFIndex(t)
+def constructSpOptimisedFIndex(t):
+    bwm = spCalculateBurrowsWheelerMatrix(t)
+    return SpOptimisedFIndex(bwm, t)
 
 def _testTallyFunctionality(test):
     tally = test['class'](test['input'])
@@ -82,20 +82,20 @@ def testTallyFunctionality(constr):
     _testTallyFunctionality(
         {
             'class': constr,
-            'input': 'a',
+            'input': 'A',
             'queryTests': [
                 {
-                    'char': 'a',
+                    'char': 'A',
                     'position': 0,
                     'expectedRank': 1
                 },
                 {
-                    'char': 'a',
+                    'char': 'A',
                     'position': 2,
                     'expectedRank': -1
                 },
                 {
-                    'char': 'n',
+                    'char': 'N',
                     'position': 0,
                     'expectedRank': -1
                 }
@@ -107,20 +107,20 @@ def testTallyFunctionality(constr):
     _testTallyFunctionality(
         {
             'class': constr,
-            'input': 'abcaab$c',
+            'input': 'ACGAAC$G',
             'queryTests': [
                 {
-                    'char': 'a',
+                    'char': 'A',
                     'position': 0,
                     'expectedRank': 1
                 },
                 {
-                    'char': 'b',
+                    'char': 'C',
                     'position': 5,
                     'expectedRank': 2
                 },
                 {
-                    'char': 'n',
+                    'char': 'N',
                     'position': 0,
                     'expectedRank': -1
                 },
@@ -136,7 +136,7 @@ def testTallyFunctionality(constr):
 def constructUnoptimisedTally(t):
     return Tally(t)
 
-def constructOptimisedTally(t):
+def constructSpOptimisedTally(t):
     return OptimisedTally(t)
 
 def _testSuffixArrayFunctionality(test):
@@ -150,7 +150,7 @@ def testSuffixArrayFunctionality(constr):
     _testSuffixArrayFunctionality(
         {
             'class': constr,
-            'input': 'a$',
+            'input': 'A$',
             'queryTests': [
                 {
                     'start': 1,
@@ -166,7 +166,7 @@ def testSuffixArrayFunctionality(constr):
     _testSuffixArrayFunctionality(
         {
             'class': constr,
-            'input': 'abcaabc$',
+            'input': 'ACGAACG$',
             'queryTests': [
                 {
                     'start': 0,
@@ -180,12 +180,12 @@ def testSuffixArrayFunctionality(constr):
 def constructUnoptimisedSuffixArray(t):
     return SuffixArray(t)
 
-def constructOptimisedSuffixArray(t):
-    bwm = calculateBurrowsWheelerMatrixUnoptimised(t)
-    fIndex = OptimisedFIndex(bwm)
-    lIndex = calculateLIndexUnoptimized(bwm)
-    tally = OptimisedTally(lIndex)
-    return OptimisedSuffixArray(t, fIndex, lIndex, tally)
+def constructSpOptimisedSuffixArray(t):
+    bwm = spCalculateBurrowsWheelerMatrix(t)
+    fIndex = SpOptimisedFIndex(bwm, t)
+    lIndex = spCalculateLIndex(bwm, t)
+    tally = SpOptimisedTally(lIndex)
+    return SpOptimisedSuffixArray(bwm, fIndex, lIndex, tally)
 
 def _testFMIndex(test):
     try:
@@ -276,10 +276,16 @@ def testFMIndex(constr):
     )
 
 def testUnoptimisedFMIndex():
+    testFIndexFunctionality(constructUnoptimisedFIndex)
+    testTallyFunctionality(constructUnoptimisedTally)
+    testSuffixArrayFunctionality(constructUnoptimisedSuffixArray)
     testFMIndex(FMIndex)
+
+def testSpOptimisedFMIndex():
+    testFIndexFunctionality(constructSpOptimisedFIndex)
+    testTallyFunctionality(constructSpOptimisedTally)
+    testSuffixArrayFunctionality(constructSpOptimisedSuffixArray)
+    testFMIndex(SpOptimisedFMIndex)
 
 def testOptimisedFMIndex():
     testFMIndex(OptimisedFMIndex)
-
-def testSpOptimisedFMIndex():
-    testFMIndex(SpOptimisedFMIndex)
