@@ -33,7 +33,8 @@ fmi_optimised.py - miltiprocess optimised FM index structures
 fmi_optimsed_structure_tests.py - unit tests of multiprocess optimised FM index structures
 
 #### FM index functionality testing
-fmi_shared_functionality_tests.py - shared tests for all implementations of functionality of FM index structures and FM index itself
+fmi_shared_functionality_tests.py - shared tests for all implementations of functionality of FM index structures and FM index itself  
+All structures are subjected to the same functionality tests to ensure no regressions between implementations. All implementations of FM index are also subjected to the same tests to ensure all implementations return the same results.
 
 #### Combined testing
 unit_test.py - runs all defined tests for all implementations
