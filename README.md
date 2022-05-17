@@ -2,7 +2,7 @@
 
 ## Aleksandar Malovic 2021/3375
 
-Video presentation: [Video presentation](https://www.youtube.com/watch?v=hhbMQNiOfj0)
+Video presentation: [Video presentation](https://youtu.be/Q7nZYdZ_pUU)
 
 ### Repository structure:
 
